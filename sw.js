@@ -1,8 +1,9 @@
-const CACHE_NAME = 'jotto-v1';
+const CACHE_NAME = 'jotto-v2';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/icon-192.svg'
 ];
 
 // Install service worker and cache files
@@ -10,7 +11,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()) // Activate immediately
   );
 });
 
@@ -25,34 +26,29 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => self.clients.claim()) // Take control immediately
   );
 });
 
-// Serve from cache, fall back to network
+// Network first, fall back to cache (better for updates)
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request).then(response => {
-          // Don't cache non-successful responses
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          // Clone and cache the response
+        // Got a good response, cache it
+        if (response && response.status === 200) {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);
           });
-          return response;
-        });
+        }
+        return response;
       })
       .catch(() => {
-        // Offline fallback - return cached index
-        return caches.match('/index.html');
+        // Network failed, try cache
+        return caches.match(event.request).then(response => {
+          return response || caches.match('/index.html');
+        });
       })
   );
 });

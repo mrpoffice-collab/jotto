@@ -778,6 +778,7 @@
         // Toggle letter crossed state
         function toggleLetter(element) {
             element.classList.toggle('crossed');
+            saveGame();
         }
 
         // Check if word is valid
@@ -833,6 +834,7 @@
             wordInput.value = '';
             responseInput.value = '';
             wordInput.focus();
+            saveGame();
         }
 
         // Add scratch word
@@ -846,11 +848,87 @@
             const tag = document.createElement('span');
             tag.className = 'scratch-word';
             tag.textContent = word;
-            tag.onclick = () => tag.classList.toggle('crossed');
+            tag.onclick = () => { tag.classList.toggle('crossed'); saveGame(); };
             pad.appendChild(tag);
 
             input.value = '';
             input.focus();
+            saveGame();
+        }
+
+        // Save game state to localStorage
+        function saveGame() {
+            const state = {
+                myWord: document.getElementById('myWord').value,
+                alphabet: Array.from(document.querySelectorAll('.letter')).map(l => l.classList.contains('crossed')),
+                wordSlots: Array.from(document.querySelectorAll('.word-slot')).map(s => s.value),
+                scratchWords: Array.from(document.querySelectorAll('.scratch-word')).map(w => ({
+                    text: w.textContent,
+                    crossed: w.classList.contains('crossed')
+                })),
+                guesses: Array.from(document.querySelectorAll('.guess-row')).map(r => ({
+                    word: r.querySelector('.guess-word').textContent,
+                    response: r.querySelector('.guess-response').textContent
+                }))
+            };
+            localStorage.setItem('jottoGame', JSON.stringify(state));
+        }
+
+        // Load game state from localStorage
+        function loadGame() {
+            const saved = localStorage.getItem('jottoGame');
+            if (!saved) return;
+
+            try {
+                const state = JSON.parse(saved);
+
+                // Restore my word
+                if (state.myWord) {
+                    document.getElementById('myWord').value = state.myWord;
+                }
+
+                // Restore alphabet
+                if (state.alphabet) {
+                    document.querySelectorAll('.letter').forEach((letter, i) => {
+                        if (state.alphabet[i]) letter.classList.add('crossed');
+                    });
+                }
+
+                // Restore word slots
+                if (state.wordSlots) {
+                    document.querySelectorAll('.word-slot').forEach((slot, i) => {
+                        slot.value = state.wordSlots[i] || '';
+                    });
+                }
+
+                // Restore scratch words
+                if (state.scratchWords) {
+                    const pad = document.getElementById('scratchPad');
+                    state.scratchWords.forEach(w => {
+                        const tag = document.createElement('span');
+                        tag.className = 'scratch-word' + (w.crossed ? ' crossed' : '');
+                        tag.textContent = w.text;
+                        tag.onclick = () => { tag.classList.toggle('crossed'); saveGame(); };
+                        pad.appendChild(tag);
+                    });
+                }
+
+                // Restore guesses
+                if (state.guesses) {
+                    const list = document.getElementById('guessList');
+                    state.guesses.forEach(g => {
+                        const row = document.createElement('div');
+                        row.className = 'guess-row';
+                        row.innerHTML = `
+                            <span class="guess-word">${g.word}</span>
+                            <span class="guess-response">${g.response}</span>
+                        `;
+                        list.appendChild(row);
+                    });
+                }
+            } catch (e) {
+                // Invalid saved state, ignore
+            }
         }
 
         // Reset game
@@ -865,14 +943,16 @@
             document.getElementById('scratchWord').value = '';
             document.querySelectorAll('.word-slot').forEach(slot => slot.value = '');
             initAlphabet();
+            localStorage.removeItem('jottoGame');
         }
 
-        // Word slot auto-advance
+        // Word slot auto-advance + save
         document.querySelectorAll('.word-slot').forEach((slot, index, slots) => {
             slot.addEventListener('input', function() {
                 if (this.value && index < slots.length - 1) {
                     slots[index + 1].focus();
                 }
+                saveGame();
             });
             slot.addEventListener('keydown', function(e) {
                 if (e.key === 'Backspace' && !this.value && index > 0) {
@@ -880,6 +960,11 @@
                 }
             });
         });
+
+        // Save when my word changes
+        document.getElementById('myWord').addEventListener('input', saveGame);
+
+        // Save when alphabet is clicked (added in initAlphabet)
 
         // Handle Enter key
         document.addEventListener('keydown', function(e) {
@@ -902,6 +987,7 @@
 
         // Initialize on load
         initAlphabet();
+        loadGame();
     </script>
 </body>
 </html>
