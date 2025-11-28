@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Jotto">
+    <meta name="theme-color" content="#f5f5dc">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.svg">
+    <title>Jotto</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f5dc;
+            padding: 12px;
+            padding-top: env(safe-area-inset-top, 12px);
+            padding-bottom: env(safe-area-inset-bottom, 12px);
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+            letter-spacing: 0.3rem;
+            font-weight: 700;
+        }
+
+        /* Section styling */
+        .section {
+            background: #fff;
+            border: 2px solid #333;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .section-label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        /* My Word Section */
+        .my-word-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .my-word-input input {
+            font-family: 'Courier New', monospace;
+            font-size: 1.25rem;
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+            padding: 10px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            width: 140px;
+            text-align: center;
+        }
+
+        .my-word-input button {
+            font-family: inherit;
+            padding: 10px 14px;
+            border: 2px solid #333;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .my-word-input button:active {
+            background: #ddd;
+        }
+
+        .word-status {
+            font-size: 0.85rem;
+            margin-top: 6px;
+            min-height: 1.2em;
+            font-weight: 500;
+        }
+
+        .word-status.valid {
+            color: #2e7d32;
+        }
+
+        .word-status.invalid {
+            color: #c62828;
+        }
+
+        /* Alphabet Section */
+        .alphabet {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 4px;
+        }
+
+        .letter {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            background: #fff;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Courier New', monospace;
+        }
+
+        .letter:active {
+            background: #eee;
+        }
+
+        .letter.crossed {
+            background: #ccc;
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        /* Ideas Section */
+        .word-slots {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .word-slot {
+            width: 36px;
+            height: 42px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            text-align: center;
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 0;
+        }
+
+        .scratch-pad {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 32px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .scratch-word {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            background: #fff;
+            border: 1px solid #999;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .scratch-word.crossed {
+            text-decoration: line-through;
+            color: #999;
+            background: #eee;
+        }
+
+        .scratch-input {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .scratch-input input {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            padding: 6px 8px;
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        .scratch-input button {
+            font-family: inherit;
+            padding: 6px 10px;
+            border: 2px solid #333;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .scratch-input button:active {
+            background: #ddd;
+        }
+
+        /* Guesses Section - flexible height */
+        .section.guesses {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .guess-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 60px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .guess-row {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 8px 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .guess-row:last-child {
+            border-bottom: none;
+        }
+
+        .guess-word {
+            flex: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+            font-size: 1rem;
+        }
+
+        .guess-response {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* New Guess Input */
+        .new-guess {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .new-guess input {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            letter-spacing: 0.15rem;
+            text-transform: uppercase;
+            padding: 10px 8px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .new-guess input[type="number"] {
+            width: 50px;
+            flex: none;
+            text-align: center;
+            letter-spacing: 0;
+            -moz-appearance: textfield;
+        }
+
+        .new-guess input[type="number"]::-webkit-inner-spin-button,
+        .new-guess input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .new-guess button {
+            font-family: inherit;
+            padding: 10px 12px;
+            border: 2px solid #333;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .new-guess button:active {
+            background: #ddd;
+        }
+
+        /* Reset button */
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 2px solid #333;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+            -webkit-tap-highlight-color: transparent;
+            margin-top: auto;
+        }
+
+        .reset-btn:active {
+            background: #ddd;
+        }
+
+        /* Prevent text selection on interactive elements */
+        button, .letter {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JOTTO</h1>
+
+        <!-- My Secret Word -->
+        <div class="section">
+            <div class="section-label">My Secret Word</div>
+            <div class="my-word-input">
+                <input type="text" id="myWord" maxlength="5" placeholder="WORD" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <button onclick="checkWord()">Check</button>
+            </div>
+            <div class="word-status" id="wordStatus"></div>
+        </div>
+
+        <!-- Alphabet -->
+        <div class="section">
+            <div class="section-label">Alphabet</div>
+            <div class="alphabet" id="alphabet"></div>
+        </div>
+
+        <!-- Ideas -->
+        <div class="section">
+            <div class="section-label">Ideas</div>
+            <div class="word-slots">
+                <input type="text" class="word-slot" maxlength="1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <input type="text" class="word-slot" maxlength="1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <input type="text" class="word-slot" maxlength="1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <input type="text" class="word-slot" maxlength="1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <input type="text" class="word-slot" maxlength="1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+            </div>
+            <div class="scratch-pad" id="scratchPad"></div>
+            <div class="scratch-input">
+                <input type="text" id="scratchWord" placeholder="add word idea" maxlength="10" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <button onclick="addScratchWord()">Add</button>
+            </div>
+        </div>
+
+        <!-- Guesses -->
+        <div class="section guesses">
+            <div class="section-label">Guesses</div>
+            <div class="guess-list" id="guessList"></div>
+            <div class="new-guess">
+                <input type="text" id="guessWord" maxlength="5" placeholder="GUESS" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+                <input type="number" id="guessResponse" min="0" max="5" placeholder="#" inputmode="numeric">
+                <button onclick="addGuess()">Add</button>
+            </div>
+        </div>
+
+        <button class="reset-btn" onclick="resetGame()">New Game</button>
+    </div>
+
+    <script>
+        // 5-letter word list for validation (common words, no repeating letters)
+        const VALID_WORDS = [
+            'about','above','abuse','actor','acute','admit','adopt','adult','after','again',
+            'agent','agree','ahead','alarm','album','alert','alien','align','alive','allow',
+            'alone','along','alter','among','angel','anger','angle','angry','apart','apple',
+            'apply','arena','argue','arise','armed','armor','aside','asset','avoid','awake',
+            'award','aware','badly','baker','bands','basic','basin','basis','beach','beard',
+            'beast','began','begin','being','below','bench','birth','black','blade','blame',
+            'blank','blast','blaze','blend','bless','blind','block','blond','blown','blues',
+            'board','boast','bound','boxer','brain','brand','brave','bread','break','brick',
+            'bride','brief','bring','broad','broke','brown','brush','build','built','bunch',
+            'burst','buyer','cabin','cable','camel','camps','canal','candy','canoe','cards',
+            'cargo','carol','carve','cause','cedar','chain','chair','champ','chant','chaos',
+            'charm','chart','chase','cheap','check','chest','chief','child','china','chirp',
+            'chord','chose','chunk','civic','civil','claim','clamp','claps','clash','clasp',
+            'claws','clean','clear','clerk','click','cliff','climb','cling','clips','cloak',
+            'clock','clone','close','cloth','cloud','clout','clown','clubs','clued','clues',
+            'clump','clung','coach','coast','cobra','coils','coins','comet','coral','corps',
+            'couch','cough','could','count','court','cover','crack','craft','crane','crash',
+            'crawl','craze','crazy','cream','crest','cried','crime','crisp','croak','crops',
+            'crowd','crown','crude','crush','crust','cubic','cumin','cupid','curbs','curly',
+            'curse','curve','cyber','cycle','daily','dairy','daisy','dance','dated','dates',
+            'dealt','death','debug','debut','decal','decay','decor','decoy','deity','delay',
+            'delta','demon','denim','depot','depth','derby','desks','detox','diets','digit',
+            'dimly','diner','disco','ditch','diver','dodge','doing','donor','donut','doubt',
+            'dough','draft','drain','drake','drama','drank','drape','drawl','drawn','draws',
+            'dread','dream','dried','drift','drill','drink','drive','drone','drops','drove',
+            'drown','drugs','drums','drunk','dryer','dryly','ducks','duels','duets','dukes',
+            'dumps','dunes','dunks','dwarf','dwell','dying','eager','eagle','early','earth',
+            'easel','eaten','ebony','eight','eject','elbow','elder','elect','elfin','elide',
+            'elite','elope','elude','elves','email','ember','empty','enact','endow','enjoy',
+            'entry','envoy','equal','equip','erase','erect','erupt','ether','ethic','evade',
+            'event','every','exact','exams','excel','exert','exile','exist','expat','expel',
+            'extra','exult','faced','facts','fades','fails','faint','fairy','faith','faked',
+            'falls','false','famed','fancy','fangs','farce','farms','fatal','fault','fauna',
+            'favor','feast','feats','fiber','field','fiend','fiery','fifth','fight','filch',
+            'filed','films','filmy','final','finch','finds','fined','finer','fired','fires',
+            'firms','first','fishy','fixed','fixer','fixes','fjord','flack','flags','flair',
+            'flake','flaky','flame','flank','flaps','flare','flash','flask','flats','flaws',
+            'fleas','fleck','flesh','flick','flier','flies','fling','flint','flips','flirt',
+            'float','flock','flood','floor','flops','flora','flour','flout','flows','fluid',
+            'fluke','flung','flush','flute','foams','focal','focus','folds','folks','fonts',
+            'force','forge','forgo','forks','forms','forte','forth','forty','forum','found',
+            'foyer','frail','frame','frank','fraud','frays','freak','fresh','friar','fried',
+            'fries','frill','frisk','frock','frogs','front','frost','froth','frown','froze',
+            'fruit','fuels','fully','fumed','fumes','funds','fungi','funky','furls','fused',
+            'gains','gamer','games','gangs','gasps','gauge','gaunt','gauze','gavel','gawks',
+            'gazer','gears','gecko','geeks','genre','germs','ghost','giant','gifts','girly',
+            'girth','given','giver','gives','glade','gland','glare','gleam','glean','glide',
+            'glint','globe','gloom','glory','glove','glows','glued','glues','glyph','gnash',
+            'gnats','gnome','goads','goals','goats','godly','going','golds','golfs','goner',
+            'gongs','goods','goofs','goose','gorge','gouge','gourd','gowns','grabs','grace',
+            'grade','graft','grail','grain','grams','grand','grant','grape','graph','grasp',
+            'grate','grave','gravy','grays','graze','great','greed','green','greys','grief',
+            'grill','grime','grimy','grind','grins','gripe','grips','grist','grits','groan',
+            'groat','groin','groom','grope','group','grove','growl','grown','grows','grubs',
+            'gruel','gruff','grump','grunt','guard','guava','guest','guide','guild','guilt',
+            'guise','gulch','gulps','gusts','gusty','gutsy','habit','hails','hairy','halts',
+            'handy','hangs','hardy','harem','harps','harsh','hasty','hatch','hated','hater',
+            'hates','hauls','haunt','haven','havoc','hawks','hazel','heads','heady','heals',
+            'heard','hears','heart','heath','heats','heavy','hedge','heeds','heels','hefty',
+            'heirs','heist','helix','helps','hence','henry','herbs','herds','heron','hides',
+            'highs','hiker','hikes','hilts','hinds','hinge','hints','hippo','hired','hitch',
+            'hived','hives','hoard','hoary','hobby','hoist','holds','holey','holms','holts',
+            'homer','homes','honed','honey','honks','honor','hoods','hoofs','hooks','hoops',
+            'hoped','hoper','hopes','horde','horns','horse','horsy','hosed','hoses','hotel',
+            'hound','hours','house','hovel','hover','howls','huffy','huger','hulks','human',
+            'humid','humps','humus','hunks','hunts','hurls','hurts','husks','husky','hyena',
+            'hyped','hyper','hypes','icier','icily','icing','icons','ideal','ideas','idiom',
+            'idiot','idler','idles','idols','igloo','image','imbue','impel','imply','inane',
+            'inbox','incur','index','indie','inept','inert','infer','ingot','inked','inlay',
+            'inlet','input','inter','intro','ionic','irate','irked','irons','irony','isled',
+            'isles','itchy','items','ivory','jacks','jaded','jades','jails','jambs','jaunt',
+            'jawed','jeans','jeeps','jerks','jerky','jests','jewel','jibed','jibes','jilts',
+            'jinks','jived','jiver','jives','jocks','johns','joins','joint','joist','joked',
+            'joker','jokes','jolts','joust','joyed','judge','juice','juicy','jumbo','jumps',
+            'jumpy','junco','junks','junta','juror','kayak','keels','keeps','kelps','kempt',
+            'keyed','khaki','kicks','kills','kilns','kilts','kinds','kings','kiosk','kited',
+            'kites','klutz','knack','knead','kneel','knelt','knife','knish','knits','knobs',
+            'knock','knoll','knots','known','knows','koala','kudos','label','labor','laced',
+            'lacer','laces','lacey','lacks','lager','laird','lakes','lambs','lamed','lamer',
+            'lames','lamps','lance','lands','lanes','lanky','lapse','large','larks','larva',
+            'laser','lasts','latch','later','latex','latin','lauds','laugh','lavas','lawns',
+            'layer','layup','leads','leafs','leafy','leaks','leaky','leant','leaps','leapt',
+            'learn','leary','lease','leash','least','leave','ledge','leech','leeks','lefts',
+            'lefty','legal','lemon','lemur','lends','lento','leper','lever','liars','licks',
+            'lidos','liege','liens','lifer','lifts','light','liked','liken','liker','likes',
+            'lilac','limbo','limbs','limed','limes','limey','limit','limns','limps','lined',
+            'linen','liner','lines','lingo','lings','links','lions','lipid','lists','liter',
+            'lithe','litre','lived','liven','liver','lives','livid','loads','loafs','loams',
+            'loamy','loans','loath','lobed','lobes','local','locks','locum','locus','lodge',
+            'lofts','lofty','logic','login','logos','loins','loner','longs','looks','looms',
+            'loops','loopy','loose','loots','loped','loper','lopes','lords','loser','loses',
+            'lotus','lough','louis','louse','lousy','louts','loved','lover','loves','lower',
+            'loyal','lucid','lucks','lucky','lumen','lumps','lumpy','lunar','lunch','lunge',
+            'lungs','lurch','lured','lurer','lures','lurks','lusty','lutes','lying','lymph',
+            'lynch','lyric','macho','macro','madam','madly','mafia','magic','magma','mails',
+            'maims','mains','maize','major','maker','males','manga','mange','mango','mangy',
+            'mania','manic','manly','manor','maple','march','mares','marks','marsh','masks',
+            'mason','match','mated','mater','mates','mauls','mayor','mazes','meals','mealy',
+            'means','meant','meats','meaty','medal','media','medic','melds','melon','melts',
+            'memos','mends','menus','mercy','merge','merit','meshy','metal','meter','metro',
+            'micro','midst','might','milks','milky','mimic','mince','minds','mined','miner',
+            'mines','minor','mints','minty','minus','mired','mires','mirth','miser','misty',
+            'miter','mitre','mixed','mixer','mixes','moans','moats','mocha','mocks','modal',
+            'model','modem','modes','moist','molar','molds','moldy','moles','molts','money',
+            'monks','month','moods','moody','moons','moony','moors','moose','moped','moper',
+            'mopes','moral','moray','morph','morse','mosey','motel','motet','moths','mothy',
+            'motif','motor','mould','moult','mound','mount','mourn','mouse','mousy','mouth',
+            'moved','mover','moves','movie','mowed','mower','mucks','mucky','mucus','muddy',
+            'muffy','muggy','mulch','mules','mural','murks','murky','mused','muser','muses',
+            'mushy','music','musky','musts','musty','muted','muter','mutes','myths','nails',
+            'naive','naked','named','namer','names','naped','napes','narcs','nards','narks',
+            'nasal','nasty','natal','naval','navel','naves','neaps','nears','neath','necks',
+            'nerds','nerdy','nerve','nervy','nests','never','newer','newly','newsy','newts',
+            'nexus','nicer','niche','nicks','niece','nifty','night','nimby','ninja','ninth',
+            'nixed','nixes','noble','nobly','nodal','nodes','noire','noise','noisy','nomad',
+            'nonce','noose','nopes','norms','norse','north','nosed','noser','noses','nosey',
+            'notch','noted','noter','notes','nouns','novel','nudes','nudge','nuked','nukes',
+            'numbs','nurse','nutsy','nylon','oaken','oakum','oared','oases','oasis','oater',
+            'oaths','obeys','ocean','octal','octet','oculi','odder','odors','offal','offer',
+            'often','ogled','ogler','ogles','oiled','oiler','oinks','okays','olden','older',
+            'oldie','olive','ombre','omega','omens','omits','onset','oomph','oozed','oozes',
+            'opals','opens','opera','optic','opted','oracy','orals','orate','orbit','order',
+            'organ','other','otter','ought','ounce','outed','outer','outgo','ovary','ovate',
+            'ovens','overt','owing','owned','owner','oxide','ozone','paced','pacer','paces',
+            'packs','paged','pager','pages','pails','pains','paint','pairs','pales','palms',
+            'palsy','panel','panes','pangs','panic','pansy','pants','panty','papal','paper',
+            'parch','pared','paren','pares','paris','parks','parse','parts','party','pasta',
+            'paste','pasty','patch','paths','patio','patsy','pause','paved','paver','paves',
+            'pawed','pawns','payee','payer','peace','peach','peaks','peaky','peals','pearl',
+            'pears','peats','peaty','pecks','pedal','peeks','peels','peeps','peers','penal',
+            'pence','pends','perch','perks','perky','perms','pesto','pests','pesty','petal',
+            'phase','phone','phony','photo','piano','picks','picky','piece','piers','piety',
+            'piked','piker','pikes','piled','piles','pilot','pimps','pinch','pined','pines',
+            'pings','pinko','pinks','pinky','pints','pinup','pious','piped','piper','pipes',
+            'pique','pitch','piths','pithy','piton','pivot','pixel','place','plaid','plain',
+            'plane','plank','plans','plant','plate','plats','plays','plaza','plead','pleas',
+            'pleat','plebe','plied','plier','plies','plods','plonk','plops','plots','plows',
+            'ploys','pluck','plugs','plumb','plume','plump','plums','plumy','plunk','plush',
+            'poems','poesy','poets','point','poise','poked','poker','pokes','polar','poled',
+            'poles','pomp','ponds','pondy','pongs','pools','porch','pored','pores','porky',
+            'ports','posed','poser','poses','posit','posts','potty','pouch','poult','pound',
+            'pours','pouts','pouty','power','prams','prank','prawn','prays','preen','prexy',
+            'pricy','pride','pried','prier','pries','prime','primo','primp','prims','print',
+            'prior','prism','privy','prize','probe','prods','profs','promo','proms','prone',
+            'prong','proof','props','prose','prosy','proud','prove','prowl','prows','proxy',
+            'prude','prune','psalm','pubic','pucks','pudgy','puffs','puffy','puked','pukes',
+            'pulls','pulps','pulpy','pulse','pumas','pumps','punch','punks','punky','pupil',
+            'puree','purer','purge','purse','pushy','putts','pygmy','pylon','quack','quaff',
+            'quail','quake','qualm','quark','quart','quasi','quays','queen','queer','quell',
+            'query','quest','queue','quick','quids','quiet','quiff','quill','quilt','quirk',
+            'quite','quits','quota','quote','raced','racer','races','racks','radar','radii',
+            'radio','radon','rafts','raged','rager','rages','raids','rails','rainy','raise',
+            'raked','raker','rakes','ramps','ranch','rands','randy','range','rangy','ranks',
+            'rants','rapid','rarer','raspy','rated','rater','rates','ratio','raved','ravel',
+            'raven','raver','raves','rawer','rayon','razed','razer','razes','razor','reach',
+            'react','reads','ready','realm','reals','reams','reaps','rears','rebel','rebid',
+            'rebus','rebut','recap','recur','redid','redly','reeds','reedy','reefs','reefy',
+            'reeks','reeky','reels','refer','refit','regal','rehab','reign','reins','relax',
+            'relay','relic','remit','remix','renal','rends','renew','rents','repay','repel',
+            'reply','rerun','reset','resin','retch','retro','retry','reuse','revel','revue',
+            'rhino','rhyme','rider','rides','ridge','ridgy','rifer','rifle','rifts','right',
+            'rigid','rigor','riled','riles','rinds','rings','rinks','rinse','ripen','riper',
+            'risen','riser','rises','risks','risky','rites','ritzy','rival','riven','river',
+            'rivet','roach','roads','roams','roars','roast','robed','robes','robin','robot',
+            'rocks','rocky','rodeo','rogue','roils','roles','roman','romps','roofs','rooms',
+            'roomy','roots','rooty','roped','roper','ropes','roses','rosin','rotor','rouge',
+            'rough','round','rouse','route','rover','rowdy','rowed','rower','royal','rubes',
+            'ruble','ruddy','ruder','rugby','ruins','ruled','ruler','rules','rumba','rumor',
+            'rumps','runes','rungs','runic','runts','runty','rupee','rural','rusts','rusty',
+            'saber','sable','sabre','sacks','sadly','safer','safes','sages','saint','sails',
+            'salad','salon','salsa','salts','salty','salve','samba','sands','sandy','saner',
+            'sangs','sapid','sarge','saris','sarky','satem','satin','satyr','sauce','saucy',
+            'sauna','saute','saved','saver','saves','savor','sawed','sawer','scale','scalp',
+            'scald','scaly','scamp','scams','scant','scare','scarf','scary','scene','scent',
+            'schmo','score','scorn','scout','scowl','scram','scrap','screw','scrub','scrum',
+            'scuba','scuds','scuff','sculp','seals','seams','seamy','sears','seats','sects',
+            'sedan','seedy','seeks','seeps','seepy','segue','seize','semis','sends','sense',
+            'sepia','sepoy','serge','serif','serum','serve','setup','seven','sever','sewed',
+            'sewer','shack','shade','shady','shaft','shake','shaky','shale','shame','shams',
+            'shank','shape','shard','share','shark','sharp','shave','shawl','shawm','shays',
+            'sheaf','shear','sheds','sheen','sheer','sheet','sheik','shelf','shift','shims',
+            'shine','shins','shiny','ships','shirk','shirt','shock','shone','shook','shoot',
+            'shops','shore','shorn','short','shots','shout','shove','shown','shows','showy',
+            'shred','shrew','shrub','shrug','shuck','shuns','shunt','shuts','sided','sider',
+            'sides','siege','sifts','sighs','sight','sigma','signs','silks','silky','silty',
+            'since','sinew','singe','sings','sinks','sinus','siren','sitar','sited','sites',
+            'sixth','sixty','sized','sizer','sizes','skate','skein','skids','skied','skier',
+            'skies','skimp','skims','skins','skips','skirt','skits','skulk','skunk','slabs',
+            'slack','slags','slain','slake','slams','slang','slant','slaps','slash','slate',
+            'slats','slaty','slave','slays','sleek','slept','slice','slick','slide','slime',
+            'slimy','sling','slink','slips','slits','slobs','slogs','slope','slops','slosh',
+            'sloth','slots','slows','slubs','slued','slues','slugs','slums','slung','slunk',
+            'slurp','slurs','slush','slyer','slyly','smack','smart','smash','smear','smelt',
+            'smile','smirk','smite','smith','smock','smoke','smoky','smote','snack','snafu',
+            'snags','snail','snake','snaky','snaps','snare','snarl','sneak','snide','sniff',
+            'snipe','snips','snits','snobs','snoop','snore','snort','snots','snout','snowy',
+            'snubs','snuck','snuff','snugs','soaks','soaps','soapy','soars','sober','socks',
+            'sodas','sofas','softy','soggy','soils','solar','soled','soler','soles','solid',
+            'solos','solve','sonar','songs','sonic','sooth','sooty','sores','sorts','souls',
+            'sound','soups','soupy','sours','south','sowed','sower','space','spade','spank',
+            'spans','spare','spark','spars','spasm','spawn','speak','spear','speck','specs',
+            'speed','spend','spent','sperm','spice','spicy','spied','spiel','spier','spies',
+            'spike','spiky','spine','spins','spiny','spire','spite','spits','splat','split',
+            'spoil','spoke','spoof','spook','spool','spoon','spore','sport','spots','spout',
+            'spray','spree','sprig','spuds','spume','spumy','spunk','spurn','spurs','spurt',
+            'squad','squat','squaw','squib','squid','stabs','stack','stage','staid','stain',
+            'stair','stake','stale','stalk','stamp','stand','stank','staph','stare','stark',
+            'stars','start','stash','state','stats','stave','stays','steak','steal','steam',
+            'steed','steep','steno','steps','stern','stews','stick','stilt','sting','stink',
+            'stint','stock','stoic','stoke','stole','stomp','stone','stony','stood','stool',
+            'stoop','stops','store','stork','storm','story','stout','stove','strap','straw',
+            'stray','strep','strew','strip','strut','stuck','studs','study','stuff','stump',
+            'stung','stunk','stuns','stunt','style','stymy','suave','sucks','sucky','sugar',
+            'sulks','sulky','super','surge','surly','sushi','swabs','swamp','swank','swans',
+            'swaps','swarm','swash','swath','swats','sways','swear','sweat','swept','swift',
+            'swigs','swine','swing','swipe','swirl','swish','sword','swore','sworn','swung',
+            'sylph','syncs','synod','syrup','table','taboo','tacit','tacks','tacky','tacos',
+            'tails','taint','taken','taker','takes','tales','talks','talky','tamed','tamer',
+            'tames','tampa','tangs','tangy','tanks','tansy','taped','taper','tapes','tardy',
+            'tarns','tarot','tarps','taste','tasty','taunt','tawny','taxed','taxer','taxes',
+            'taxis','teach','teaks','teams','tears','teary','tease','teats','teens','tempi',
+            'tempo','temps','tempt','tends','tenon','tenor','tense','tenth','tents','tepid',
+            'terms','terns','terse','tesla','tests','testy','texts','thank','thaws','theft',
+            'their','theme','these','thick','thief','thigh','thine','thing','think','thins',
+            'third','thong','thorn','those','threw','throb','throw','thrum','thuds','thugs',
+            'thumb','thump','thyme','tiara','tibia','ticks','tidal','tides','tiers','tiger',
+            'tight','tilde','tiled','tiler','tiles','tilts','timed','timer','times','timid',
+            'tinct','tints','tipsy','tired','tires','titan','title','toast','today','toffs',
+            'togas','toked','token','tokes','tombs','tomes','tonal','toned','toner','tones',
+            'tongs','tonic','tools','topaz','topic','toped','toper','topes','topsy','torch',
+            'torus','total','totem','touch','tough','tours','touts','towed','towel','tower',
+            'towns','toxic','toxin','trace','track','tract','trade','trail','train','trait',
+            'tramp','trams','trans','traps','trash','trawl','trays','tread','treat','treed',
+            'trend','triad','trial','tribe','trick','tried','trier','tries','trigs','trike',
+            'trims','trios','tripe','trips','trite','tromp','troop','trope','troth','trots',
+            'trout','trove','trows','truce','truck','trued','truer','trues','truly','trump',
+            'trunk','tryst','tubal','tubas','tubed','tuber','tubes','tucks','tufts','tufty',
+            'tulip','tumid','tumor','tunas','tuned','tuner','tunes','tunic','turbo','turds',
+            'turfs','turfy','turns','turps','tutor','twain','twang','tweak','tweed','twerp',
+            'twice','twigs','twine','twins','twirl','twist','twits','tying','typed','typer',
+            'types','typos','udder','ulcer','ultra','umbra','umped','umphs','unarm','unbar',
+            'unbid','unbox','uncap','uncle','uncut','under','undid','undue','unfed','unfit',
+            'unfix','unhip','unify','union','unite','units','unity','unked','unlay','unlet',
+            'unlit','unman','unmet','unpeg','unpin','unrig','unrip','unsay','unset','unsew',
+            'untie','until','unwed','unwet','unwit','unwon','unzip','upped','upper','upset',
+            'urban','urged','urges','urine','usage','usher','using','usual','usurp','uteri',
+            'utter','uvula','vague','valet','valid','valor','value','valve','vamps','vampy',
+            'vanes','vapor','vases','vault','vaunt','vegan','veils','veins','veiny','veldt',
+            'venom','vents','venue','verbs','verge','verse','verso','verve','vests','vetch',
+            'video','views','vigor','viler','villa','vinca','vined','vines','vinyl','viols',
+            'viper','viral','virus','visar','visas','vised','vises','visit','visor','vista',
+            'vitas','vivid','vixen','vocal','vodka','vogue','voice','voids','voila','voile',
+            'volts','vomit','voted','voter','votes','vouch','vowed','vowel','vying','wacko',
+            'wacks','wacky','waded','wader','wades','wafer','wafts','waged','wager','wages',
+            'wagon','waifs','wails','waist','waits','waive','waked','waken','waker','wakes',
+            'walks','waltz','wands','waned','wanes','wanly','wants','wards','wares','warms',
+            'warns','warps','warts','warty','washy','wasps','waspy','waste','watch','water',
+            'waved','waver','waves','waxed','waxen','waxer','waxes','weald','weals','weans',
+            'wears','weary','weave','weber','wedge','wedgy','weeds','weedy','weeks','weeps',
+            'weepy','weigh','weird','welch','welds','wench','wends','wests','wetly','whack',
+            'whale','whams','wharf','wheat','whelk','whelm','whelp','where','which','whiff',
+            'while','whims','whine','whins','whiny','whips','whirl','whirs','whisk','white',
+            'whits','whole','whomp','whoop','whops','whose','wicks','widen','wider','wides',
+            'widow','width','wield','wifes','wifey','wifty','wilds','wiled','wiles','wilts',
+            'wimps','wimpy','wince','winch','winds','windy','wined','wines','wings','wingy',
+            'winks','wiped','wiper','wipes','wired','wirer','wires','wised','wiser','wises',
+            'wisps','wispy','witch','withe','withs','withy','wived','wives','wizen','wizes',
+            'woken','wolfs','woman','wombs','women','wonga','wonks','wonky','woods','woody',
+            'wooed','wooer','woofs','words','wordy','works','world','worms','wormy','worry',
+            'worse','worst','worth','would','wound','woven','wrack','wraps','wrath','wreak',
+            'wreck','wrest','wring','wrist','write','writs','wrong','wrote','wrung','wryly',
+            'yacht','yacks','yanks','yards','yarns','yawls','yawns','yawps','yearn','years',
+            'yeast','yelps','yerba','yield','yikes','yodel','yokes','yolks','yolky','young',
+            'yourn','yours','youth','yowls','yucca','yucks','yucky','yukon','zappy','zebra',
+            'zeros','zesty','zilch','zincs','zincy','zings','zingy','zonal','zoned','zoner',
+            'zones','zooms'
+        ];
+
+        // Initialize alphabet
+        function initAlphabet() {
+            const alphabet = document.getElementById('alphabet');
+            alphabet.innerHTML = '';
+            for (let i = 65; i <= 90; i++) {
+                const letter = String.fromCharCode(i);
+                const div = document.createElement('div');
+                div.className = 'letter';
+                div.textContent = letter;
+                div.onclick = () => toggleLetter(div);
+                alphabet.appendChild(div);
+            }
+        }
+
+        // Toggle letter crossed state
+        function toggleLetter(element) {
+            element.classList.toggle('crossed');
+        }
+
+        // Check if word is valid
+        function checkWord() {
+            const input = document.getElementById('myWord');
+            const status = document.getElementById('wordStatus');
+            const word = input.value.toUpperCase().trim();
+
+            if (word.length !== 5) {
+                status.textContent = 'Word must be 5 letters';
+                status.className = 'word-status invalid';
+                return;
+            }
+
+            // Check for repeating letters
+            const uniqueLetters = new Set(word.split(''));
+            if (uniqueLetters.size !== 5) {
+                status.textContent = 'No repeating letters allowed';
+                status.className = 'word-status invalid';
+                return;
+            }
+
+            // Check if valid word
+            if (VALID_WORDS.includes(word.toLowerCase())) {
+                status.textContent = 'Valid word!';
+                status.className = 'word-status valid';
+            } else {
+                status.textContent = 'Not in word list';
+                status.className = 'word-status invalid';
+            }
+        }
+
+        // Add a guess to the list
+        function addGuess() {
+            const wordInput = document.getElementById('guessWord');
+            const responseInput = document.getElementById('guessResponse');
+            const list = document.getElementById('guessList');
+
+            const word = wordInput.value.toUpperCase().trim();
+            const response = responseInput.value;
+
+            if (word.length === 0) return;
+
+            const row = document.createElement('div');
+            row.className = 'guess-row';
+            row.innerHTML = `
+                <span class="guess-word">${word}</span>
+                <span class="guess-response">${response}</span>
+            `;
+            list.appendChild(row);
+            list.scrollTop = list.scrollHeight;
+
+            wordInput.value = '';
+            responseInput.value = '';
+            wordInput.focus();
+        }
+
+        // Add scratch word
+        function addScratchWord() {
+            const input = document.getElementById('scratchWord');
+            const pad = document.getElementById('scratchPad');
+            const word = input.value.toUpperCase().trim();
+
+            if (word.length === 0) return;
+
+            const tag = document.createElement('span');
+            tag.className = 'scratch-word';
+            tag.textContent = word;
+            tag.onclick = () => tag.classList.toggle('crossed');
+            pad.appendChild(tag);
+
+            input.value = '';
+            input.focus();
+        }
+
+        // Reset game
+        function resetGame() {
+            document.getElementById('myWord').value = '';
+            document.getElementById('wordStatus').textContent = '';
+            document.getElementById('wordStatus').className = 'word-status';
+            document.getElementById('guessList').innerHTML = '';
+            document.getElementById('guessWord').value = '';
+            document.getElementById('guessResponse').value = '';
+            document.getElementById('scratchPad').innerHTML = '';
+            document.getElementById('scratchWord').value = '';
+            document.querySelectorAll('.word-slot').forEach(slot => slot.value = '');
+            initAlphabet();
+        }
+
+        // Word slot auto-advance
+        document.querySelectorAll('.word-slot').forEach((slot, index, slots) => {
+            slot.addEventListener('input', function() {
+                if (this.value && index < slots.length - 1) {
+                    slots[index + 1].focus();
+                }
+            });
+            slot.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    slots[index - 1].focus();
+                }
+            });
+        });
+
+        // Handle Enter key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (document.activeElement.id === 'myWord') {
+                    checkWord();
+                } else if (document.activeElement.id === 'guessWord' ||
+                           document.activeElement.id === 'guessResponse') {
+                    addGuess();
+                } else if (document.activeElement.id === 'scratchWord') {
+                    addScratchWord();
+                }
+            }
+        });
+
+        // Register service worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        }
+
+        // Initialize on load
+        initAlphabet();
+    </script>
+</body>
+</html>

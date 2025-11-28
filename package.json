@@ -1,0 +1,6 @@
+{
+  "name": "jotto",
+  "version": "1.0.0",
+  "description": "A pen and paper word guessing game for road trips",
+  "private": true
+}
