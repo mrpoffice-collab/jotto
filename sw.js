@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jotto-v3';
+const CACHE_NAME = 'jotto-v4';
 const urlsToCache = [
   '/',
   '/index.html',

@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f4e4c1">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192.svg">
-    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
     <title>Jotto</title>
     <style>
         * {
@@ -162,7 +162,7 @@
             display: none;
         }
 
-        .word-cover dotlottie-player {
+        .word-cover lottie-player {
             width: 80px;
             height: 80px;
         }
@@ -497,13 +497,13 @@
             <div class="section-label">My Secret Word <button class="reveal-btn" id="toggleCover">Hide</button></div>
             <div class="word-cover-container">
                 <div class="word-cover hidden" id="wordCover" onclick="toggleWordCover()">
-                    <dotlottie-player
+                    <lottie-player
                         src="https://lottie.host/ec5c895b-3b48-47d6-aee7-140756e329e0/Gna2XdBK0l.lottie"
                         background="transparent"
                         speed="1"
                         loop
                         autoplay>
-                    </dotlottie-player>
+                    </lottie-player>
                     <span class="word-cover-hint">tap to reveal</span>
                 </div>
                 <div class="my-word-input">
