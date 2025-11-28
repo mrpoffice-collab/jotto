@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jotto-v4';
+const CACHE_NAME = 'jotto-v5';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -32,11 +32,16 @@ self.addEventListener('activate', event => {
 
 // Network first, fall back to cache (better for updates)
 self.addEventListener('fetch', event => {
+  // Only handle http/https requests
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Got a good response, cache it
-        if (response && response.status === 200) {
+        // Got a good response, cache it (only same-origin)
+        if (response && response.status === 200 && response.type === 'basic') {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);
