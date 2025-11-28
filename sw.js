@@ -1,9 +1,10 @@
-const CACHE_NAME = 'jotto-v5';
+const CACHE_NAME = 'jotto-v6';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icon-192.svg'
+  '/icon-192.svg',
+  '/cover.json'
 ];
 
 // Install service worker and cache files
