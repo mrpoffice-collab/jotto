@@ -181,6 +181,110 @@
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
         }
 
+        /* Rules Modal */
+        .rules-btn {
+            font-family: 'Georgia', serif;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid #b8a88c;
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d3 100%);
+            color: #5d4e37;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(93, 78, 55, 0.15);
+            -webkit-tap-highlight-color: transparent;
+            margin-left: 8px;
+        }
+
+        .rules-btn:active {
+            background: linear-gradient(180deg, #f0e6d3 0%, #e6dcc9 100%);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(93, 78, 55, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(180deg, #fffef9 0%, #faf6ed 100%);
+            border: 1px solid #d4c4a8;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 360px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(93, 78, 55, 0.3);
+        }
+
+        .modal h2 {
+            font-family: 'Georgia', serif;
+            color: #5d4e37;
+            margin-bottom: 16px;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .modal h3 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #8b7355;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 14px;
+            margin-bottom: 6px;
+        }
+
+        .modal p, .modal li {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #5d4e37;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .modal ul {
+            margin-left: 16px;
+            margin-bottom: 8px;
+        }
+
+        .modal li {
+            margin-bottom: 4px;
+        }
+
+        .modal-close {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid #b8a88c;
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d3 100%);
+            color: #5d4e37;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(93, 78, 55, 0.15);
+        }
+
+        .modal-close:active {
+            background: linear-gradient(180deg, #f0e6d3 0%, #e6dcc9 100%);
+        }
+
         .reveal-btn {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             padding: 6px 10px;
@@ -496,7 +600,39 @@
 </head>
 <body>
     <div class="container">
-        <h1>JOTTO</h1>
+        <h1>JOTTO <button class="rules-btn" onclick="toggleRules()">?</button></h1>
+
+    <!-- Rules Modal -->
+    <div class="modal-overlay" id="rulesModal" onclick="toggleRules()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h2>How to Play</h2>
+
+            <h3>Setup</h3>
+            <p>Each player picks a secret 5-letter word with no repeating letters. Use "Check" to verify it's valid.</p>
+
+            <h3>Gameplay</h3>
+            <ul>
+                <li>Take turns guessing 5-letter words</li>
+                <li>After each guess, your opponent tells you how many letters match their secret word</li>
+                <li>Letters don't need to be in the right position - just count matches</li>
+            </ul>
+
+            <h3>Example</h3>
+            <p>If the secret word is <strong>CRANE</strong> and you guess <strong>BEACH</strong>, the answer is <strong>2</strong> (C and E match).</p>
+
+            <h3>Tools</h3>
+            <ul>
+                <li><strong>Alphabet</strong> - Tap to cross off eliminated letters</li>
+                <li><strong>Ideas</strong> - Build theories and jot down word ideas</li>
+                <li><strong>Hide</strong> - Cover your secret word from peekers</li>
+            </ul>
+
+            <h3>Winning</h3>
+            <p>First player to guess the opponent's exact word wins!</p>
+
+            <button class="modal-close" onclick="toggleRules()">Got it!</button>
+        </div>
+    </div>
 
         <!-- My Secret Word -->
         <div class="section">
@@ -849,6 +985,11 @@
         function toggleLetter(element) {
             element.classList.toggle('crossed');
             saveGame();
+        }
+
+        // Toggle rules modal
+        function toggleRules() {
+            document.getElementById('rulesModal').classList.toggle('show');
         }
 
         // Toggle word cover
