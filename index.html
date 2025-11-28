@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Jotto">
-    <meta name="theme-color" content="#f5f5dc">
+    <meta name="theme-color" content="#f4e4c1">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192.svg">
     <title>Jotto</title>
@@ -23,8 +23,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f5f5dc;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(145deg, #f4e4c1 0%, #e8d4a8 100%);
             padding: 12px;
             padding-top: env(safe-area-inset-top, 12px);
             padding-bottom: env(safe-area-inset-bottom, 12px);
@@ -41,26 +41,32 @@
         h1 {
             text-align: center;
             margin-bottom: 12px;
-            font-size: 1.5rem;
-            letter-spacing: 0.3rem;
+            font-size: 1.6rem;
+            letter-spacing: 0.4rem;
             font-weight: 700;
+            color: #5d4e37;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
         }
 
         /* Section styling */
         .section {
-            background: #fff;
-            border: 2px solid #333;
+            background: linear-gradient(180deg, #fffef9 0%, #faf6ed 100%);
+            border: 1px solid #d4c4a8;
             padding: 12px;
             margin-bottom: 10px;
-            border-radius: 4px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(93, 78, 55, 0.12),
+                        0 1px 2px rgba(93, 78, 55, 0.08);
         }
 
         .section-label {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-weight: 600;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             margin-bottom: 8px;
-            color: #666;
+            color: #8b7355;
+            letter-spacing: 0.05rem;
         }
 
         /* My Word Section */
@@ -76,41 +82,57 @@
             letter-spacing: 0.2rem;
             text-transform: uppercase;
             padding: 10px;
-            border: 2px solid #333;
-            border-radius: 4px;
+            border: 1px solid #c4b49a;
+            border-radius: 6px;
             width: 140px;
             text-align: center;
+            background: #fffef9;
+            box-shadow: inset 0 1px 3px rgba(93, 78, 55, 0.1);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .my-word-input input:focus {
+            outline: none;
+            border-color: #8b7355;
+            box-shadow: inset 0 1px 3px rgba(93, 78, 55, 0.1),
+                        0 0 0 3px rgba(139, 115, 85, 0.15);
         }
 
         .my-word-input button {
-            font-family: inherit;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             padding: 10px 14px;
-            border: 2px solid #333;
-            background: #fff;
+            border: 1px solid #b8a88c;
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d3 100%);
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            border-radius: 4px;
+            border-radius: 6px;
+            color: #5d4e37;
+            box-shadow: 0 1px 3px rgba(93, 78, 55, 0.15);
             -webkit-tap-highlight-color: transparent;
+            transition: all 0.15s;
         }
 
         .my-word-input button:active {
-            background: #ddd;
+            background: linear-gradient(180deg, #f0e6d3 0%, #e6dcc9 100%);
+            box-shadow: 0 1px 1px rgba(93, 78, 55, 0.1);
+            transform: translateY(1px);
         }
 
         .word-status {
-            font-size: 0.85rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.8rem;
             margin-top: 6px;
             min-height: 1.2em;
             font-weight: 500;
         }
 
         .word-status.valid {
-            color: #2e7d32;
+            color: #4a7c59;
         }
 
         .word-status.invalid {
-            color: #c62828;
+            color: #a65d57;
         }
 
         /* Alphabet Section */
@@ -125,75 +147,99 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid #333;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            font-weight: bold;
+            border: 1px solid #c4b49a;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
             user-select: none;
-            background: #fff;
+            background: linear-gradient(180deg, #fffef9 0%, #f8f4eb 100%);
             -webkit-tap-highlight-color: transparent;
-            font-family: 'Courier New', monospace;
+            font-family: 'Georgia', serif;
+            color: #5d4e37;
+            box-shadow: 0 1px 2px rgba(93, 78, 55, 0.1);
+            transition: all 0.15s;
         }
 
         .letter:active {
-            background: #eee;
+            background: linear-gradient(180deg, #f0e6d3 0%, #e6dcc9 100%);
+            transform: scale(0.95);
         }
 
         .letter.crossed {
-            background: #ccc;
-            color: #888;
+            background: linear-gradient(180deg, #e8e0d0 0%, #ddd5c5 100%);
+            color: #a99f8f;
             text-decoration: line-through;
+            box-shadow: inset 0 1px 2px rgba(93, 78, 55, 0.1);
         }
 
         /* Ideas Section */
         .word-slots {
             display: flex;
-            gap: 4px;
+            gap: 5px;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .word-slot {
-            width: 36px;
-            height: 42px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.3rem;
+            width: 38px;
+            height: 44px;
+            font-family: 'Georgia', serif;
+            font-size: 1.4rem;
             text-transform: uppercase;
             text-align: center;
-            border: 2px solid #333;
-            border-radius: 4px;
+            border: 1px solid #c4b49a;
+            border-radius: 6px;
             padding: 0;
+            background: linear-gradient(180deg, #fffef9 0%, #f8f4eb 100%);
+            color: #5d4e37;
+            box-shadow: 0 1px 3px rgba(93, 78, 55, 0.12);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .word-slot:focus {
+            outline: none;
+            border-color: #8b7355;
+            box-shadow: 0 1px 3px rgba(93, 78, 55, 0.12),
+                        0 0 0 3px rgba(139, 115, 85, 0.15);
         }
 
         .scratch-pad {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            min-height: 32px;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: #fafafa;
+            min-height: 36px;
+            padding: 8px;
+            border: 1px solid #d4c4a8;
+            border-radius: 6px;
+            background: linear-gradient(180deg, #f8f4eb 0%, #f2ece0 100%);
         }
 
         .scratch-word {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
+            font-family: 'Georgia', serif;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            padding: 4px 8px;
-            background: #fff;
-            border: 1px solid #999;
-            border-radius: 4px;
+            padding: 5px 10px;
+            background: linear-gradient(180deg, #fffef9 0%, #faf6ed 100%);
+            border: 1px solid #c4b49a;
+            border-radius: 5px;
             cursor: pointer;
             user-select: none;
+            color: #5d4e37;
+            box-shadow: 0 1px 2px rgba(93, 78, 55, 0.1);
             -webkit-tap-highlight-color: transparent;
+            transition: all 0.15s;
+        }
+
+        .scratch-word:active {
+            transform: scale(0.97);
         }
 
         .scratch-word.crossed {
             text-decoration: line-through;
-            color: #999;
-            background: #eee;
+            color: #a99f8f;
+            background: linear-gradient(180deg, #e8e0d0 0%, #ddd5c5 100%);
+            box-shadow: inset 0 1px 2px rgba(93, 78, 55, 0.08);
         }
 
         .scratch-input {
@@ -207,25 +253,39 @@
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             text-transform: uppercase;
-            padding: 6px 8px;
-            border: 2px solid #333;
-            border-radius: 4px;
+            padding: 8px;
+            border: 1px solid #c4b49a;
+            border-radius: 6px;
+            background: #fffef9;
+            box-shadow: inset 0 1px 3px rgba(93, 78, 55, 0.1);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .scratch-input input:focus {
+            outline: none;
+            border-color: #8b7355;
+            box-shadow: inset 0 1px 3px rgba(93, 78, 55, 0.1),
+                        0 0 0 3px rgba(139, 115, 85, 0.15);
         }
 
         .scratch-input button {
-            font-family: inherit;
-            padding: 6px 10px;
-            border: 2px solid #333;
-            background: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 8px 12px;
+            border: 1px solid #b8a88c;
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d3 100%);
             cursor: pointer;
             font-weight: 600;
             font-size: 0.8rem;
-            border-radius: 4px;
+            border-radius: 6px;
+            color: #5d4e37;
+            box-shadow: 0 1px 3px rgba(93, 78, 55, 0.15);
             -webkit-tap-highlight-color: transparent;
+            transition: all 0.15s;
         }
 
         .scratch-input button:active {
-            background: #ddd;
+            background: linear-gradient(180deg, #f0e6d3 0%, #e6dcc9 100%);
+            transform: translateY(1px);
         }
 
         /* Guesses Section - flexible height */
@@ -241,17 +301,19 @@
             flex: 1;
             overflow-y: auto;
             margin-bottom: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 1px solid #d4c4a8;
+            border-radius: 6px;
             min-height: 60px;
+            background: linear-gradient(180deg, #f8f4eb 0%, #f2ece0 100%);
             -webkit-overflow-scrolling: touch;
         }
 
         .guess-row {
             display: flex;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #e4d9c8;
             padding: 8px 10px;
-            font-family: 'Courier New', monospace;
+            font-family: 'Georgia', serif;
+            color: #5d4e37;
         }
 
         .guess-row:last-child {
@@ -261,15 +323,16 @@
         .guess-word {
             flex: 1;
             text-transform: uppercase;
-            letter-spacing: 0.15rem;
-            font-size: 1rem;
+            letter-spacing: 0.12rem;
+            font-size: 0.95rem;
         }
 
         .guess-response {
-            width: 30px;
+            width: 32px;
             text-align: center;
             font-weight: bold;
             font-size: 1rem;
+            color: #8b7355;
         }
 
         /* New Guess Input */
@@ -282,13 +345,23 @@
         .new-guess input {
             font-family: 'Courier New', monospace;
             font-size: 1rem;
-            letter-spacing: 0.15rem;
+            letter-spacing: 0.12rem;
             text-transform: uppercase;
             padding: 10px 8px;
-            border: 2px solid #333;
-            border-radius: 4px;
+            border: 1px solid #c4b49a;
+            border-radius: 6px;
             flex: 1;
             min-width: 0;
+            background: #fffef9;
+            box-shadow: inset 0 1px 3px rgba(93, 78, 55, 0.1);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .new-guess input:focus {
+            outline: none;
+            border-color: #8b7355;
+            box-shadow: inset 0 1px 3px rgba(93, 78, 55, 0.1),
+                        0 0 0 3px rgba(139, 115, 85, 0.15);
         }
 
         .new-guess input[type="number"] {
@@ -306,37 +379,47 @@
         }
 
         .new-guess button {
-            font-family: inherit;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             padding: 10px 12px;
-            border: 2px solid #333;
-            background: #fff;
+            border: 1px solid #b8a88c;
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d3 100%);
             cursor: pointer;
             font-weight: 600;
-            border-radius: 4px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            color: #5d4e37;
+            box-shadow: 0 1px 3px rgba(93, 78, 55, 0.15);
             -webkit-tap-highlight-color: transparent;
+            transition: all 0.15s;
         }
 
         .new-guess button:active {
-            background: #ddd;
+            background: linear-gradient(180deg, #f0e6d3 0%, #e6dcc9 100%);
+            transform: translateY(1px);
         }
 
         /* Reset button */
         .reset-btn {
             width: 100%;
             padding: 12px;
-            font-family: inherit;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 0.9rem;
             font-weight: 600;
-            border: 2px solid #333;
-            background: #fff;
+            border: 1px solid #b8a88c;
+            background: linear-gradient(180deg, #faf6ed 0%, #f0e6d3 100%);
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 8px;
+            color: #5d4e37;
+            box-shadow: 0 2px 4px rgba(93, 78, 55, 0.15);
             -webkit-tap-highlight-color: transparent;
             margin-top: auto;
+            transition: all 0.15s;
         }
 
         .reset-btn:active {
-            background: #ddd;
+            background: linear-gradient(180deg, #f0e6d3 0%, #e6dcc9 100%);
+            box-shadow: 0 1px 2px rgba(93, 78, 55, 0.1);
+            transform: translateY(1px);
         }
 
         /* Prevent text selection on interactive elements */
